@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "199095e97ebcedc029e82d15eaea77fa",
+    "content-hash": "ea73a0fad8acdb4b34ad147b24de5f14",
     "packages": [
         {
             "name": "brick/math",
@@ -134,6 +134,71 @@
                 }
             ],
             "time": "2024-02-09T16:56:22+00:00"
+        },
+        {
+            "name": "clevision/laravel-creem",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "./packages/clevision/laravel-creem",
+                "reference": "b8dfa96d8fbdfa58ce55855ae44ca5a04a3f2049"
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.0",
+                "illuminate/console": "^10.0|^11.0|^12.0",
+                "illuminate/http": "^10.0|^11.0|^12.0",
+                "illuminate/support": "^10.0|^11.0|^12.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.6",
+                "orchestra/testbench": "^8.0|^9.0",
+                "pestphp/pest": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Clevision\\Creem\\CreemServiceProvider"
+                    ],
+                    "aliases": {
+                        "Creem": "Clevision\\Creem\\Facades\\Creem"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Clevision\\Creem\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Clevision\\Creem\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "CleVision",
+                    "email": "hello@clevision.dev"
+                }
+            ],
+            "description": "Official Laravel package for Creem — Merchant of Record for SaaS and digital businesses.",
+            "homepage": "https://creem.io",
+            "keywords": [
+                "billing",
+                "creem",
+                "laravel",
+                "payments",
+                "saas",
+                "subscriptions"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "dflydev/dot-access-data",
@@ -9356,8 +9421,10 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": {},
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "clevision/laravel-creem": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

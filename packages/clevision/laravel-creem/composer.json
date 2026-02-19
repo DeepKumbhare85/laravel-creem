@@ -1,7 +1,14 @@
 {
     "name": "clevision/laravel-creem",
     "description": "Official Laravel package for Creem — Merchant of Record for SaaS and digital businesses.",
-    "keywords": ["laravel", "creem", "payments", "subscriptions", "saas", "billing"],
+    "keywords": [
+        "laravel",
+        "creem",
+        "payments",
+        "subscriptions",
+        "saas",
+        "billing"
+    ],
     "homepage": "https://creem.io",
     "license": "MIT",
     "authors": [
