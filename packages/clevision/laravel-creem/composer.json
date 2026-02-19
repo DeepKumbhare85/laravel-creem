@@ -1,0 +1,50 @@
+{
+    "name": "clevision/laravel-creem",
+    "description": "Official Laravel package for Creem — Merchant of Record for SaaS and digital businesses.",
+    "keywords": ["laravel", "creem", "payments", "subscriptions", "saas", "billing"],
+    "homepage": "https://creem.io",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CleVision",
+            "email": "hello@clevision.dev"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^10.0|^11.0|^12.0",
+        "illuminate/http": "^10.0|^11.0|^12.0",
+        "illuminate/console": "^10.0|^11.0|^12.0",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0|^9.0",
+        "pestphp/pest": "^2.0",
+        "mockery/mockery": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Clevision\\Creem\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Clevision\\Creem\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Clevision\\Creem\\CreemServiceProvider"
+            ],
+            "aliases": {
+                "Creem": "Clevision\\Creem\\Facades\\Creem"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
