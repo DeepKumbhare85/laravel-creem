@@ -48,6 +48,34 @@ class Creem
     // -------------------------------------------------------------------------
 
     /**
+     * Create a new product (one-time or recurring/subscription).
+     *
+     * Required params: name, price (in cents), currency, billing_type ('onetime' or 'recurring')
+     * If billing_type = 'recurring', also pass billing_period ('every-month', 'every-year', etc.)
+     *
+     * @example One-time product
+     *   Creem::createProduct([
+     *       'name'         => 'Lifetime Access',
+     *       'price'        => 4900,          // $49.00
+     *       'currency'     => 'USD',
+     *       'billing_type' => 'onetime',
+     *   ]);
+     *
+     * @example Subscription product
+     *   Creem::createProduct([
+     *       'name'           => 'Pro Plan',
+     *       'price'          => 2900,        // $29.00/month
+     *       'currency'       => 'USD',
+     *       'billing_type'   => 'recurring',
+     *       'billing_period' => 'every-month',
+     *   ]);
+     */
+    public function createProduct(array $params): array
+    {
+        return $this->client->createProduct($params);
+    }
+
+    /**
      * Retrieve a single product by its ID.
      */
     public function getProduct(string $productId): array

@@ -86,6 +86,52 @@ class CreemDemoController extends Controller
     }
 
     /**
+     * Create a new product via the Creem API (one-time or subscription).
+     */
+    public function createProduct(Request $request)
+    {
+        $validated = $request->validate([
+            'name'           => ['required', 'string', 'max:255'],
+            'description'    => ['nullable', 'string', 'max:1000'],
+            'price'          => ['required', 'numeric', 'min:1'],
+            'currency'       => ['required', 'string', 'size:3'],
+            'billing_type'   => ['required', 'in:onetime,recurring'],
+            'billing_period' => ['required_if:billing_type,recurring', 'nullable', 'string'],
+            'tax_category'   => ['nullable', 'in:saas,digital-goods-service,ebooks'],
+        ]);
+
+        // Convert price from dollars to cents
+        $params = [
+            'name'         => $validated['name'],
+            'price'        => (int) round($validated['price'] * 100),
+            'currency'     => strtoupper($validated['currency']),
+            'billing_type' => $validated['billing_type'],
+        ];
+
+        if (! empty($validated['description'])) {
+            $params['description'] = $validated['description'];
+        }
+
+        if ($validated['billing_type'] === 'recurring' && ! empty($validated['billing_period'])) {
+            $params['billing_period'] = $validated['billing_period'];
+        }
+
+        if (! empty($validated['tax_category'])) {
+            $params['tax_category'] = $validated['tax_category'];
+        }
+
+        try {
+            $product = Creem::createProduct($params);
+
+            return back()->with('success', 'Product "' . ($product['name'] ?? $validated['name']) . '" created! ID: ' . ($product['id'] ?? 'unknown'));
+        } catch (\Throwable $e) {
+            return back()
+                ->with('creem_error', $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
      * Verify a webhook signature (AJAX call from the UI verifier widget).
      */
     public function verifySignature(Request $request)

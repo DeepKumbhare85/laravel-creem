@@ -75,6 +75,18 @@ class CreemClient
     }
 
     /**
+     * Create a new product.
+     *
+     * @param  array  $params  Required: name, price (cents), currency, billing_type (onetime|recurring).
+     *                         Optional: description, image_url, billing_period, tax_mode, tax_category,
+     *                                   default_success_url, custom_fields, abandoned_cart_recovery_enabled.
+     */
+    public function createProduct(array $params): array
+    {
+        return $this->post('/v1/products', $params);
+    }
+
+    /**
      * List all products.
      */
     public function listProducts(array $params = []): array

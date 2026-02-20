@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creem Test Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] {
+            display: none !important
+        }
+    </style>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
@@ -342,6 +348,156 @@
                 @error('product_id')
                     <p class="text-xs text-red-500 mt-2">{{ $message }}</p>
                 @enderror
+            </div>
+        </section>
+
+        {{-- ── Create Product ───────────────────────────────────────────────── --}}
+        <section>
+            <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Create Product</h2>
+            <div class="bg-white border border-gray-200 rounded-xl p-6">
+                <p class="text-sm text-gray-600 mb-5">Create a one-time purchase or subscription product directly via
+                    the Creem API.</p>
+
+                <form action="{{ route('creem.create-product') }}" method="POST" class="space-y-5"
+                    x-data="{ billingType: '{{ old('billing_type', 'onetime') }}' }">
+                    @csrf
+
+                    {{-- Billing type toggle --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Product
+                            Type</label>
+                        <div class="flex gap-2">
+                            <label
+                                class="flex-1 flex items-center gap-3 border rounded-lg px-4 py-3 cursor-pointer transition-all"
+                                :class="billingType === 'onetime'
+                                    ?
+                                    'border-indigo-500 bg-indigo-50 ring-1 ring-indigo-500' :
+                                    'border-gray-200 hover:border-gray-300'">
+                                <input type="radio" name="billing_type" value="onetime" x-model="billingType"
+                                    class="accent-indigo-600">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800">One-Time Purchase</p>
+                                    <p class="text-xs text-gray-500">Customer pays once and owns the product</p>
+                                </div>
+                            </label>
+                            <label
+                                class="flex-1 flex items-center gap-3 border rounded-lg px-4 py-3 cursor-pointer transition-all"
+                                :class="billingType === 'recurring'
+                                    ?
+                                    'border-indigo-500 bg-indigo-50 ring-1 ring-indigo-500' :
+                                    'border-gray-200 hover:border-gray-300'">
+                                <input type="radio" name="billing_type" value="recurring" x-model="billingType"
+                                    class="accent-indigo-600">
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800">Subscription</p>
+                                    <p class="text-xs text-gray-500">Recurring billing on a set schedule</p>
+                                </div>
+                            </label>
+                        </div>
+                        @error('billing_type')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Name & Description --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Product Name <span
+                                    class="text-red-500">*</span></label>
+                            <input type="text" name="name" value="{{ old('name') }}"
+                                placeholder="e.g. Pro Plan, Lifetime Access"
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400"
+                                required>
+                            @error('name')
+                                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Description</label>
+                            <input type="text" name="description" value="{{ old('description') }}"
+                                placeholder="Short product description"
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400">
+                        </div>
+                    </div>
+
+                    {{-- Price, Currency, Billing Period --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Price <span
+                                    class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">$</span>
+                                <input type="number" name="price" value="{{ old('price') }}"
+                                    placeholder="29.00" min="1" step="0.01"
+                                    class="w-full border border-gray-300 rounded-lg pl-7 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400"
+                                    required>
+                            </div>
+                            @error('price')
+                                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Currency <span
+                                    class="text-red-500">*</span></label>
+                            <select name="currency"
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white">
+                                @foreach (['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CHF', 'SEK', 'NOK', 'DKK'] as $cur)
+                                    <option value="{{ $cur }}"
+                                        {{ old('currency', 'USD') === $cur ? 'selected' : '' }}>
+                                        {{ $cur }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div x-show="billingType === 'recurring'" x-cloak>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Billing Period <span
+                                    class="text-red-500">*</span></label>
+                            <select name="billing_period"
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white">
+                                <option value="every-month"
+                                    {{ old('billing_period', 'every-month') === 'every-month' ? 'selected' : '' }}>
+                                    Monthly</option>
+                                <option value="every-year"
+                                    {{ old('billing_period') === 'every-year' ? 'selected' : '' }}>Yearly</option>
+                                <option value="every-week"
+                                    {{ old('billing_period') === 'every-week' ? 'selected' : '' }}>Weekly</option>
+                                <option value="every-3-months"
+                                    {{ old('billing_period') === 'every-3-months' ? 'selected' : '' }}>Quarterly
+                                </option>
+                            </select>
+                            @error('billing_period')
+                                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Tax Category --}}
+                    <div class="flex items-end gap-4">
+                        <div class="flex-1">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Tax Category</label>
+                            <select name="tax_category"
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white">
+                                <option value="">— None / Default —</option>
+                                <option value="saas" {{ old('tax_category') === 'saas' ? 'selected' : '' }}>SaaS
+                                </option>
+                                <option value="digital-goods-service"
+                                    {{ old('tax_category') === 'digital-goods-service' ? 'selected' : '' }}>Digital
+                                    Goods / Service</option>
+                                <option value="ebooks" {{ old('tax_category') === 'ebooks' ? 'selected' : '' }}>eBooks
+                                </option>
+                            </select>
+                        </div>
+                        <button type="submit"
+                            class="bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition-colors duration-150 flex items-center gap-2 whitespace-nowrap">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            Create Product
+                        </button>
+                    </div>
+                </form>
             </div>
         </section>
 

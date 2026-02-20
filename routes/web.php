@@ -9,3 +9,4 @@ Route::get('/checkout/success', [CreemDemoController::class, 'checkoutSuccess'])
 Route::post('/creem/checkout', [CreemDemoController::class, 'checkout'])->name('creem.checkout');
 Route::get('/creem/api', [CreemDemoController::class, 'api'])->name('creem.api');
 Route::post('/creem/verify-signature', [CreemDemoController::class, 'verifySignature'])->name('creem.verify-signature');
+Route::post('/creem/create-product', [CreemDemoController::class, 'createProduct'])->name('creem.create-product');

@@ -6,7 +6,31 @@
 [![PHP Version](https://img.shields.io/packagist/php-v/clevision/laravel-creem.svg)](https://packagist.org/packages/clevision/laravel-creem)
 [![License](https://img.shields.io/packagist/l/clevision/laravel-creem.svg)](LICENSE)
 
-The official **Laravel** package for [Creem](https://creem.io) — a Merchant of Record platform for SaaS and digital businesses. Accept payments, manage subscriptions, handle webhooks, and stay globally tax-compliant with a clean, Laravel-native API.
+The official **Laravel** package for [Creem](https://creem.io) — a Merchant of Record platform for SaaS and digital businesses. Accept one-time payments, manage subscriptions, **create products programmatically**, handle webhooks, validate license keys, and stay globally tax-compliant — all with a clean, Laravel-native API.
+
+---
+
+## Table of Contents
+
+1. [Requirements](#requirements)
+2. [Installation](#installation)
+3. [Configuration](#configuration)
+4. [Quick Start](#quick-start)
+5. [Products — One-Time & Subscription](#products--one-time--subscription)
+6. [Checkout Sessions](#checkout-sessions)
+7. [Subscriptions](#subscriptions)
+8. [Customers & Billing Portal](#customers--billing-portal)
+9. [Orders (Transactions)](#orders-transactions)
+10. [Discounts](#discounts)
+11. [License Keys](#license-keys)
+12. [Refunds](#refunds)
+13. [Webhooks](#webhooks)
+14. [Signature Verification](#signature-verification)
+15. [Artisan Commands](#artisan-commands)
+16. [Demo Dashboard](#demo-dashboard)
+17. [Error Handling](#error-handling)
+18. [Testing](#testing)
+19. [Advanced Usage](#advanced-usage)
 
 ---
 
@@ -82,6 +106,79 @@ public function checkout(Request $request)
 
     return redirect($session['checkout_url']);
 }
+```
+
+Creem handles tax, currency conversion, receipts, and global compliance automatically.
+
+---
+
+## Products — One-Time & Subscription
+
+Products can be created programmatically via the API or through the [Creem Dashboard](https://creem.io/dashboard).
+
+### Create a one-time purchase product
+
+```php
+$product = Creem::createProduct([
+    'name'         => 'Lifetime Access',
+    'description'  => 'Unlimited access forever.',
+    'price'        => 4900,       // Amount in cents → $49.00
+    'currency'     => 'USD',
+    'billing_type' => 'onetime',
+    'tax_category' => 'saas',     // saas | digital-goods-service | ebooks
+]);
+
+echo $product['id'];   // prod_abc123
+```
+
+### Create a subscription (monthly)
+
+```php
+$product = Creem::createProduct([
+    'name'           => 'Pro Plan',
+    'description'    => 'Full access, billed monthly.',
+    'price'          => 2900,          // $29.00 / month
+    'currency'       => 'USD',
+    'billing_type'   => 'recurring',
+    'billing_period' => 'every-month', // every-week|every-month|every-3-months|every-year
+    'tax_category'   => 'saas',
+]);
+```
+
+### Create a subscription (yearly)
+
+```php
+$product = Creem::createProduct([
+    'name'           => 'Pro Plan — Annual',
+    'price'          => 29000,         // $290.00 / year
+    'currency'       => 'USD',
+    'billing_type'   => 'recurring',
+    'billing_period' => 'every-year',
+]);
+```
+
+### `createProduct` parameter reference
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | string | Yes | Product display name |
+| `price` | integer | Yes | Price in cents (min 100 = $1.00) |
+| `currency` | string | Yes | ISO 4217 code: `USD`, `EUR`, `GBP`, etc. |
+| `billing_type` | string | Yes | `onetime` or `recurring` |
+| `billing_period` | string | Yes if `recurring` | `every-week`, `every-month`, `every-3-months`, `every-year` |
+| `description` | string | No | Short description shown at checkout |
+| `image_url` | string | No | Product image URL (PNG/JPG) |
+| `tax_mode` | string | No | `inclusive` or `exclusive` (default) |
+| `tax_category` | string | No | `saas`, `digital-goods-service`, `ebooks` |
+| `default_success_url` | string | No | Default redirect URL after purchase |
+| `custom_fields` | array | No | Extra fields collected at checkout (max 3) |
+| `abandoned_cart_recovery_enabled` | boolean | No | Enable abandoned cart recovery emails |
+
+---
+
+## Checkout Sessions
+
+```php
 ```
 
 ### 2. Verify the redirect signature
@@ -172,6 +269,7 @@ Creem::getCheckout(string $checkoutId): array
 ### Products
 
 ```php
+Creem::createProduct(array $params): array          // Create one-time or subscription product
 Creem::getProduct(string $productId): array
 Creem::listProducts(array $params = []): array
 ```
@@ -294,6 +392,20 @@ php artisan creem:sync-products --clear-cache # Clear cached products
 Route::post('/my-custom-webhook', MyWebhookHandler::class)
     ->middleware('creem.verify');
 ```
+
+---
+
+## Demo Dashboard
+
+The package ships with a full demo dashboard for local development. Visit `/` (or wherever you mount the demo routes).
+
+Features:
+- **Connection status** — API key, webhook secret, mode (test / live)
+- **Product listing** — All products with price and billing type badges
+- **Create product** — Form to create one-time or subscription products with billing period selector
+- **Manual checkout** — Paste any product ID to generate a checkout session
+- **Quick API explorer** — Raw JSON from products, transactions, customers
+- **Webhook HMAC verifier** — Paste payload and signature to validate
 
 ---
 
