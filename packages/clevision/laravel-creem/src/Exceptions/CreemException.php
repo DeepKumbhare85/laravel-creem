@@ -21,7 +21,8 @@ class CreemException extends Exception
 
     public static function fromResponse(int $status, array $body): static
     {
-        $message = $body['message'] ?? $body['error'] ?? "Creem API error (HTTP {$status})";
+        $raw     = $body['message'] ?? $body['error'] ?? "Creem API error (HTTP {$status})";
+        $message = is_array($raw) ? implode(', ', array_map('strval', $raw)) : (string) $raw;
         $errors  = $body['errors'] ?? [];
 
         return new static($message, $status, $errors);

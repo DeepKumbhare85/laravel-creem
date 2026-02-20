@@ -59,7 +59,7 @@ class CreemClient
      */
     public function getCheckout(string $checkoutId): array
     {
-        return $this->get("/v1/checkouts/{$checkoutId}");
+        return $this->get('/v1/checkouts', ['checkout_id' => $checkoutId]);
     }
 
     // -------------------------------------------------------------------------
@@ -71,7 +71,7 @@ class CreemClient
      */
     public function getProduct(string $productId): array
     {
-        return $this->get("/v1/products/{$productId}");
+        return $this->get('/v1/products', ['product_id' => $productId]);
     }
 
     /**
@@ -79,7 +79,7 @@ class CreemClient
      */
     public function listProducts(array $params = []): array
     {
-        return $this->get('/v1/products', $params);
+        return $this->get('/v1/products/search', $params);
     }
 
     // -------------------------------------------------------------------------
@@ -91,7 +91,7 @@ class CreemClient
      */
     public function getSubscription(string $subscriptionId): array
     {
-        return $this->get("/v1/subscriptions/{$subscriptionId}");
+        return $this->get('/v1/subscriptions', ['subscription_id' => $subscriptionId]);
     }
 
     /**
@@ -115,7 +115,7 @@ class CreemClient
      */
     public function updateSubscription(string $subscriptionId, array $params): array
     {
-        return $this->patch("/v1/subscriptions/{$subscriptionId}", $params);
+        return $this->post("/v1/subscriptions/{$subscriptionId}", $params);
     }
 
     // -------------------------------------------------------------------------
@@ -123,11 +123,11 @@ class CreemClient
     // -------------------------------------------------------------------------
 
     /**
-     * Retrieve a customer by ID.
+     * Retrieve a customer by ID or email.
      */
     public function getCustomer(string $customerId): array
     {
-        return $this->get("/v1/customers/{$customerId}");
+        return $this->get('/v1/customers', ['customer_id' => $customerId]);
     }
 
     /**
@@ -135,7 +135,7 @@ class CreemClient
      */
     public function listCustomers(array $params = []): array
     {
-        return $this->get('/v1/customers', $params);
+        return $this->get('/v1/customers/list', $params);
     }
 
     /**
@@ -143,7 +143,7 @@ class CreemClient
      */
     public function createCustomerPortal(string $customerId): array
     {
-        return $this->post("/v1/customers/{$customerId}/billing-portal");
+        return $this->post('/v1/customers/billing', ['customer_id' => $customerId]);
     }
 
     // -------------------------------------------------------------------------
@@ -151,19 +151,19 @@ class CreemClient
     // -------------------------------------------------------------------------
 
     /**
-     * Retrieve an order by ID.
+     * Retrieve a transaction/order by ID.
      */
     public function getOrder(string $orderId): array
     {
-        return $this->get("/v1/orders/{$orderId}");
+        return $this->get('/v1/transactions', ['transaction_id' => $orderId]);
     }
 
     /**
-     * List all orders.
+     * List all transactions (orders).
      */
     public function listOrders(array $params = []): array
     {
-        return $this->get('/v1/orders', $params);
+        return $this->get('/v1/transactions/search', $params);
     }
 
     // -------------------------------------------------------------------------
@@ -171,11 +171,11 @@ class CreemClient
     // -------------------------------------------------------------------------
 
     /**
-     * Retrieve a discount by ID.
+     * Retrieve a discount by ID or code.
      */
     public function getDiscount(string $discountId): array
     {
-        return $this->get("/v1/discounts/{$discountId}");
+        return $this->get('/v1/discounts', ['discount_id' => $discountId]);
     }
 
     /**
@@ -183,7 +183,7 @@ class CreemClient
      */
     public function listDiscounts(array $params = []): array
     {
-        return $this->get('/v1/discounts', $params);
+        return $this->get('/v1/discounts/search', $params);
     }
 
     // -------------------------------------------------------------------------
@@ -199,13 +199,13 @@ class CreemClient
     }
 
     /**
-     * Validate / activate a license key instance.
+     * Validate a license key instance.
      */
-    public function validateLicenseKey(string $key, string $instanceName): array
+    public function validateLicenseKey(string $key, string $instanceId): array
     {
-        return $this->post('/v1/license-keys/activate', [
-            'key'           => $key,
-            'instance_name' => $instanceName,
+        return $this->post('/v1/licenses/validate', [
+            'key'         => $key,
+            'instance_id' => $instanceId,
         ]);
     }
 
@@ -214,7 +214,7 @@ class CreemClient
      */
     public function deactivateLicenseKey(string $key, string $instanceId): array
     {
-        return $this->post('/v1/license-keys/deactivate', [
+        return $this->post('/v1/licenses/deactivate', [
             'key'         => $key,
             'instance_id' => $instanceId,
         ]);
